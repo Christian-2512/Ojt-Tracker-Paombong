@@ -9,10 +9,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = mysqli_real_escape_string($conn, $_POST['username']);
     $role = $_POST['role'];
     
-    // FIX: If admin, force hours to 0. If user, take the input.
-    $required_hours = ($role === 'admin') ? 0 : (int)$_POST['required_hours'];
+    $security_question = mysqli_real_escape_string($conn, $_POST['security_question']);
+    $security_answer = mysqli_real_escape_string($conn, $_POST['security_answer']);
     
-    // Logic: If admin, set school to 'Administrator'
+    $required_hours = ($role === 'admin') ? 0 : (int)$_POST['required_hours'];
     $school = ($role === 'admin') ? 'Administrator' : mysqli_real_escape_string($conn, $_POST['school']);
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
@@ -28,8 +28,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (mysqli_num_rows($check) > 0) {
             $error = "Username already taken!";
         } else {
-            $sql = "INSERT INTO users (full_name, username, school, password, total_required, role) 
-                    VALUES ('$full_name', '$username', '$school', '$password', '$required_hours', '$role')";
+            $sql = "INSERT INTO users (full_name, username, school, password, total_required, role, security_question, security_answer) 
+                    VALUES ('$full_name', '$username', '$school', '$password', '$required_hours', '$role', '$security_question', '$security_answer')";
 
             if (mysqli_query($conn, $sql)) {
                 header("Location: login.php?status=success");
@@ -60,6 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .btn-register { width: 100%; padding: 14px; background: #27ae60; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
         .btn-register:hover { background: #219150; transform: translateY(-2px); }
         .hidden { display: none; }
+        .input-group { margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -101,21 +102,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="number" name="required_hours" value="600">
             </div>
 
-                            <div class="input-group">
-                    <label>Security Question</label>
-                    <select name="security_question" class="form-control" required style="width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #edeff2;">
-                        <option value="" disabled selected>Select a question...</option>
-                        <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
-                        <option value="What was the name of your first pet?">What was the name of your first pet?</option>
-                        <option value="What is the name of your elementary school?">What is the name of your elementary school?</option>
-                        <option value="In what city were you born?">In what city were you born?</option>
-                    </select>
-                </div>
+            <div class="input-group">
+                <label>Security Question</label>
+                <select name="security_question" class="form-control" required style="width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #edeff2;">
+                    <option value="" disabled selected>Select a question...</option>
+                    <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                    <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+                    <option value="In what city were you born?">In what city were you born?</option>
+                    <option value="What was the name of your elementary school?">What was the name of your elementary school?</option>
+                    <option value="What is your favorite movie or book?">What is your favorite movie or book?</option>
+                    <option value="What was your childhood nickname?">What was your childhood nickname?</option>
+                    <option value="In what city did your parents meet?">In what city did your parents meet?</option>
+                    <option value="What is the name of your favorite teacher?">What is the name of your favorite teacher?</option>
+                    <option value="What was the name of the street you grew up on?">What was the name of the street you grew up on?</option>
+                    <option value="What was your dream job as a child?">What was your dream job as a child?</option>
+                </select>
+            </div>
 
-                <div class="input-group">
-                    <label>Security Answer</label>
-                    <input type="text" name="security_answer" class="form-control" placeholder="Your answer" required>
-                </div>
+            <div class="input-group">
+                <label>Security Answer</label>
+                <input type="text" name="security_answer" class="form-control" placeholder="Your answer" required>
+            </div>
 
             <label>Password</label>
             <input type="password" name="password" placeholder="••••••••" required>
@@ -133,19 +140,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             const role = document.getElementById('roleSelect').value;
             const traineeFields = document.getElementById('traineeFields');
             const adminKeyField = document.getElementById('adminKeyField');
-            
-            // This grabs the hours input
             const hoursInput = document.querySelector('input[name="required_hours"]');
 
             if (role === 'admin') {
                 traineeFields.classList.add('hidden');
                 adminKeyField.classList.remove('hidden');
-                // Force visually to 0 when Admin is selected
                 if(hoursInput) hoursInput.value = 0; 
             } else {
                 traineeFields.classList.remove('hidden');
                 adminKeyField.classList.add('hidden');
-                // Reset to default when Trainee is selected
                 if(hoursInput) hoursInput.value = 600; 
             }
         }
