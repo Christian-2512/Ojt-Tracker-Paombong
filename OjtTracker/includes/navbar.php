@@ -7,7 +7,8 @@ if (session_status() === PHP_SESSION_NONE) {
 
 <nav class="navbar">
     <div class="nav-container">
-        <a href="index.php" class="logo">OJT Tracker</a>
+    <a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') ? 'admin.php' : 'index.php'; ?>" class="logo">OJT Tracker</a>
+</div>
         
         <div class="nav-links">
     <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
