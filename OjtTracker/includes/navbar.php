@@ -7,24 +7,23 @@ if (session_status() === PHP_SESSION_NONE) {
 
 <nav class="navbar">
     <div class="nav-container">
-    <a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') ? 'admin.php' : 'index.php'; ?>" class="logo">OJT Tracker</a>
-</div>
+        <a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') ? 'admin.php' : 'index.php'; ?>" class="logo">OJT Tracker</a>
         
-        <div class="nav-links">
-    <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-        <a href="admin.php" class="admin-link">Admin Panel</a>
-        
-        <?php if (($_SESSION['admin_type'] ?? 'pure') !== 'pure'): ?>
-            <a href="index.php">Dashboard</a>
-            <a href="view_history.php">My History</a>
-        <?php endif; ?>
+        <div class="nav-right">
+            <div class="nav-links">
+                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                    <a href="admin.php" class="admin-link">Admin Panel</a>
+                    
+                    <?php if (($_SESSION['admin_type'] ?? 'pure') !== 'pure'): ?>
+                        <a href="index.php">Dashboard</a>
+                        <a href="view_history.php">My History</a>
+                    <?php endif; ?>
 
-    <?php else: ?>
-        <a href="index.php">Dashboard</a>
-        <a href="view_history.php">My History</a>
-    <?php endif; ?>
-    
-    </div>
+                <?php else: ?>
+                    <a href="index.php">Dashboard</a>
+                    <a href="view_history.php">My History</a>
+                <?php endif; ?>
+            </div>
 
             <div class="nav-profile-dropdown">
                 <button onclick="toggleNavMenu()" class="nav-user-btn" id="navUserBtn">
@@ -66,9 +65,16 @@ if (session_status() === PHP_SESSION_NONE) {
     max-width: 1100px;
     margin: 0 auto;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Pushes Logo to left, nav-right to right */
     align-items: center;
     padding: 0 20px;
+}
+
+/* NEW: Groups the links and profile button together */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 25px; 
 }
 
 .logo {
